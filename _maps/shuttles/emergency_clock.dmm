@@ -16,10 +16,11 @@
 "p" = (/obj/machinery/door/airlock/clockwork/brass{req_access = null; req_access_txt = "19"},/turf/open/floor/clockwork,/area/space)
 "q" = (/turf/open/floor/mineral/plastitanium/red/brig,/area/space)
 "r" = (/obj/machinery/door/airlock/clockwork{req_access = null},/turf/open/floor/clockwork,/area/space)
+"s" = (/obj/structure/table/reinforced/brass,/turf/open/space/basic,/area/space)
 
 (1,1,1) = {"
 aaaaaaaaaaaaaoa
-aaahjjjjjjjhcaa
+aaahjjjjjjjhcas
 aaahbbbbbbbhdea
 aahhbbbbbbbhhgf
 ahhbbbbbbbbbhha
