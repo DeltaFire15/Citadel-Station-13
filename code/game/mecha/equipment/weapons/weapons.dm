@@ -301,7 +301,7 @@
 	projectile_delay = 2
 	harmful = TRUE
 
-/obj/item/mecha_parts/mecha_equipment/ballistic/gauss
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/gauss
 	name = "Gauss Rifle"
 	desc = "A weapon for combat exosuits. Shoots a single near-instantaniouly hitting projectile."
 	icon_state = "esniper"
