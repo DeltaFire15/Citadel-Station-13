@@ -301,6 +301,16 @@
 	projectile_delay = 2
 	harmful = TRUE
 
+/obj/item/mecha_parts/mecha_equipment/ballistic/gauss
+	name = "Gauss Rifle"
+	desc = "A weapon for combat exosuits. Shoots a single near-instantaniouly hitting projectile."
+	icon_state = "esniper"
+	equip_cooldown = 40
+	projectile = /obj/item/projectile/beam/beam_rifle
+	projectiles = 10
+	projectile_energy_cost = 500
+	harmful = TRUE
+
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack
 	name = "\improper SRM-8 missile rack"
 	desc = "A weapon for combat exosuits. Shoots light explosive missiles."
