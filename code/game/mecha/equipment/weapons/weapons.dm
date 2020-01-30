@@ -304,12 +304,44 @@
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/gauss
 	name = "Gauss Rifle"
 	desc = "A weapon for combat exosuits. Shoots a single near-instantaniouly hitting projectile."
+	icon = 'icons/obj/guns/energy.dmi'
 	icon_state = "esniper"
+	item_state = "esniper"
+	fire_sound = 'sound/weapons/beam_sniper.ogg'
 	equip_cooldown = 40
-	projectile = /obj/item/projectile/beam/beam_rifle
+	projectile = /obj/item/projectile/beam/beam_rifle/gauss/hitscan
 	projectiles = 10
 	projectile_energy_cost = 500
 	harmful = TRUE
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/gauss/action(atom/target, params)
+	if(!action_checks(target))
+		return 0
+
+	var/turf/curloc = get_turf(chassis)
+	var/turf/targloc = get_turf(target)
+	if (!targloc || !istype(targloc) || !curloc)
+		return 0
+	if (targloc == curloc)
+		return 0
+
+	var/obj/item/projectile/A = new /obj/item/projectile/beam/beam_rifle/gauss/hitscan/aiming_beam(curloc)
+	A.firer = chassis.occupant
+	A.original = target
+	if(!A.suppressed && firing_effect_type)
+		new firing_effect_type(get_turf(src), chassis.dir)
+	set_ready_state(0)
+	A.preparePixelProjectile(target, chassis.occupant, params, 0)
+
+	A.fire()
+	playsound(chassis, fire_sound, 50, 1)
+	sleep(10)
+	set_ready_state(1)
+	if(!(get_dir(chassis, target)&chassis.dir))
+		return 0
+	. = ..(target, params)
+
+
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack
 	name = "\improper SRM-8 missile rack"

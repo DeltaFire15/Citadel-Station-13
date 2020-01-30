@@ -570,3 +570,56 @@
 /obj/item/projectile/beam/beam_rifle/hitscan/aiming_beam/on_hit()
 	qdel(src)
 	return BULLET_ACT_HIT
+
+/obj/item/projectile/beam/beam_rifle/gauss
+	name = "railgun projectile"
+	hitsound = 'sound/effects/explosion3.ogg'
+	damage = 20				//Blam
+	damage_type = BURN
+	flag = "energy"
+	structure_pierce_amount = 6
+	structure_bleed_coeff = 0.9				//Manually set due to how mech code handles stuff
+	do_pierce = TRUE
+	impact_structure_damage = 70
+	impact_direct_damage = 50
+
+/obj/item/projectile/beam/beam_rifle/gauss/check_pierce(atom/target)
+	if(!do_pierce)
+		return FALSE
+	if(pierced[target])		//we already pierced them go away
+		return TRUE
+	if(isliving(target))
+		if(impact_direct_damage)
+			var/mob/living/L = target
+			L.adjustFireLoss(impact_direct_damage, BURN, "energy", FALSE)
+			L.Knockdown(20, FALSE)
+			L.emote("scream")
+			to_chat(L, "<span class='userdanger'>\The [src] punches right through you!</span>")
+		return TRUE
+	. = ..(target)
+
+/obj/item/projectile/beam/beam_rifle/gauss/hitscan
+	icon_state = ""
+	hitscan = TRUE
+	tracer_type = /obj/effect/projectile/tracer/tracer/beam_rifle
+	var/constant_tracer = FALSE
+
+/obj/item/projectile/beam/beam_rifle/gauss/hitscan/generate_hitscan_tracers(cleanup = TRUE, duration = 3, impacting = TRUE, highlander)
+	. = ..(cleanup, duration, impacting, highlander)
+
+/obj/item/projectile/beam/beam_rifle/gauss/hitscan/aiming_beam
+	tracer_type = /obj/effect/projectile/tracer/tracer/aiming
+	name = "aiming beam"
+	hitsound = null
+	hitsound_wall = null
+	nodamage = TRUE
+	damage = 0
+	hitscan_light_range = 1
+	hitscan_light_intensity = 15
+	hitscan_light_color_override = "#00ffff"
+	impact_structure_damage = 0
+	impact_direct_damage = 0
+
+
+/obj/item/projectile/beam/beam_rifle/gauss/hitscan/aiming_beam/generate_hitscan_tracers(cleanup = TRUE, duration = 5, impacting = FALSE, highlander)
+	. = ..(cleanup, duration, impacting, highlander)
