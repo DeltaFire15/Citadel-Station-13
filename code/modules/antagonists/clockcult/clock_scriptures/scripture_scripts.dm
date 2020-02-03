@@ -123,9 +123,14 @@
 
 /datum/clockwork_scripture/clockwork_armaments/scripture_effects()
 	invoker.visible_message("<span class='warning'>A shimmer of yellow light infuses [invoker]!</span>", \
-	"<span class='brass'>You bind clockwork equipment to yourself. Use Clockwork Armaments and Call Spear to summon them.</span>")
-	var/datum/action/innate/call_weapon/ratvarian_spear/S = new()
-	S.Grant(invoker)
+	"<span class='brass'>You bind clockwork equipment to yourself. Use Clockwork Armaments and Call Weapon to summon them.</span>")
+	switch(alert(invoker, "Choose the weapon to bind to yourself.", "Ratvarian Spear", "Steamrifle"))
+		if("Ratvarian Spear")
+			var/datum/action/innate/call_weapon/ratvarian_spear/S = new()
+			S.Grant(invoker)
+		if("Steamrifle")
+			var/datum/action/innate/call_weapon/steamrifle/S = new()
+			S.Grant(invoker)
 	var/datum/action/innate/clockwork_armaments/A = new()
 	A.Grant(invoker)
 	return TRUE
@@ -194,6 +199,17 @@
 	name = "Call Spear"
 	desc = "Calls a Ratvarian spear into your hands to fight your enemies."
 	weapon_type = /obj/item/clockwork/weapon/ratvarian_spear
+
+//Call Rifle: Calls forth a powerful Ratvarian steamrifle
+/datum/action/innate/call_weapon/steamrifle
+	name = "Call Rifle"
+	desc = "Calls a Ratvarian steamrifle into your hands to fight your enemies."
+	weapon_type = /obj/item/gun/energy/steamrifle
+
+/datum/action/innate/call_weapon/steamrifle/Activate()
+	. = ..()
+	var/obj/item/gun/energy/steamrifle/G = weapon
+	G.gunowner = owner
 
 
 //Spatial Gateway: Allows the invoker to teleport themselves and any nearby allies to a conscious servant or clockwork obelisk.

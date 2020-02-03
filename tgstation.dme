@@ -1356,6 +1356,7 @@
 #include "code\modules\antagonists\clockcult\clock_items\wraith_spectacles.dm"
 #include "code\modules\antagonists\clockcult\clock_items\clock_weapons\_call_weapon.dm"
 #include "code\modules\antagonists\clockcult\clock_items\clock_weapons\ratvarian_spear.dm"
+#include "code\modules\antagonists\clockcult\clock_items\clock_weapons\steamrifle.dm"
 #include "code\modules\antagonists\clockcult\clock_mobs\_eminence.dm"
 #include "code\modules\antagonists\clockcult\clock_mobs\clockwork_marauder.dm"
 #include "code\modules\antagonists\clockcult\clock_scriptures\scripture_applications.dm"
