@@ -4,8 +4,9 @@
 	desc = "A pointed gunlike object made out of brass.. It hums with activity and releases steam from time to time."
 	var/clockwork_desc = "A effective rifle made out of brass. It recharges via draining power from the ark itself."
 	resistance_flags = FIRE_PROOF | ACID_PROOF
-	can_charge = 0
-	charge_delay = 5
+	can_charge = 1
+	var/ark_charge = 0
+	var/ark_charge_delay = 5
 	icon = 'icons/obj/clockwork_objects.dmi'
 	icon_state = "steamrifle"
 	item_state = "steamrifle"
@@ -24,20 +25,21 @@
 
 
 /obj/item/gun/energy/steamrifle/process()
-	. = ..()
-	charge_tick++
-	if(charge_tick > charge_delay)
+	ark_charge++
+	if(ark_charge > ark_charge_delay)
 		if(cell?.charge < cell.maxcharge && get_clockwork_power(min(cell.maxcharge - cell?.charge, 100)))
 			var/power_recharging = min(cell.maxcharge - cell?.charge, 100)
 			adjust_clockwork_power(power_recharging)
 			cell.give(power_recharging)
-			charge_tick = 0
+			ark_charge = 0
+			if(!chambered) //if empty chamber we try to charge a new shot
+				recharge_newshot(TRUE)
 			update_icon()
 			//playsound(src, 'sound/weapons/brass_charge.ogg', 100, 1)
-	if(!gunowner)
-		return
-	enrage_damage = CLAMP(round(gunowner.health / gunowner.maxHealth /*might need a different proc here*/ / enrage_step, 0) * enrage_amount_per, 0, enrage_maximum)
-	clockwork_desc = "A effective rifle made out of brass. It recharges via draining power from the ark itself. /n Currently its damage is increased by [enrage_damage] due to the injuries of its bound user."
+	if(gunowner)
+		enrage_damage = CLAMP(round(gunowner.health / gunowner.maxHealth /*might need a different proc here*/ / enrage_step, 0) * enrage_amount_per, 0, enrage_maximum)
+		clockwork_desc = "A effective rifle made out of brass. It recharges via draining power from the ark itself. \n Currently its damage is increased by [enrage_damage] due to the injuries of its bound user."
+	. = ..()
 
 /obj/item/gun/energy/steamrifle/process_fire(atom/target, mob/living/user, message = TRUE, params = null, zone_override = "", bonus_spread = 0)
 	if(!is_servant_of_ratvar(user))
@@ -46,7 +48,7 @@
 		//Possibly add a sound here too
 		return FALSE
 	if(chambered.BB)
-		chambered.BB.damage += enrage_damage //Fix this to not be able to stack
+		chambered.BB.damage = initial(chambered.BB.damage) + enrage_damage //Fix this to not be able to stack
 	. = ..()
 
 /obj/item/ammo_casing/energy/brass_bolt
