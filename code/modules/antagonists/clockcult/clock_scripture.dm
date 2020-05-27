@@ -206,7 +206,7 @@ Applications: 8 servants, 3 caches, and 100 CV
 		if(multiple_invokers_used)
 			for(var/mob/living/L in range(1, get_turf(invoker)))
 				if(can_recite_scripture(L))
-					clockwork_say(L, text2ratvar(chant_invocations), whispered)
+					clockwork_say(L, text2ratvar(pick(chant_invocations)), whispered)
 		if(!chant_effects(i))
 			break
 	if(invoker && slab)

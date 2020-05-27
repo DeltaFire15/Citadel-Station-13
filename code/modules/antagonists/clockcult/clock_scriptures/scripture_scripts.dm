@@ -271,7 +271,7 @@
 	Also charges clockwork power by a small percentage of the drained power, which can help offset the scriptures powercost."
 	chant_invocations = list("Make their lights fall dark!", "Their power shall fuel Engine!")
 	chant_amount = 20
-	chant_interval = 15
+	chant_interval = 10 //100KW drain per pulse for guns / 1MW for other cells = 10 chants / 100ds / 10s to drain a charged weapon or a baton with a nonupgraded cell
 	channel_time = 50
 	power_cost = 300
 	multiple_invokers_used = TRUE
@@ -286,7 +286,7 @@
 
 /datum/clockwork_scripture/channeled/void_volt/scripture_effects()
 	invoker.visible_message("<span class='warning'>[invoker] glows in a brilliant golden light!</span>")
-	invoker.add_atom_colour("#E2B007", ADMIN_COLOUR_PRIORITY) //#EC8A2D? TODO: Find a good color, maybe make them actually glow too and not just have the sigil effect do that
+	invoker.add_atom_colour("#FFD700", ADMIN_COLOUR_PRIORITY) //#EC8A2D? #E2B007? TODO: Find a good color, maybe make them actually glow too and not just have the sigil effect do that
 	return ..()
 
 
