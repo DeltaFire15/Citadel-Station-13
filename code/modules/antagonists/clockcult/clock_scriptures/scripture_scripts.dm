@@ -263,3 +263,31 @@
 		duration = max(duration, 100)
 	return slab.procure_gateway(invoker, duration, portal_uses)
 
+/datum/clockwork_scripture/channeled/void_volt()
+	descname = "Channeled, Power Drain"
+	name = "Void Volt"
+	desc = "A channled chant that quickly drains any powercells in a large radius, but burns the invoker. \
+	Can be channeled with more cultists to increase range and decrease damage in relation to power absorbed. \
+	Also charges clockwork power by a small percentage of the drained power, which can help offset the scriptures powercost."
+	chant_invocations = list("Make their lights fall dark!", "Their power shall fuel Ratvar!")
+	chant_amount = 20
+	chant_interval = 20
+	channel_time = 40
+	power_cost = 300
+	multiple_invokers_used = TRUE
+	multiple_invokers_optional = TRUE
+	usage_tip = "It may be useful to end channelling early if the burning gets too much."
+	tier = SCRIPTURE_SCRIPT
+	primary_component = GEIS_CAPACITOR
+	sort_priority = 8
+	quickbind = TRUE
+	quickbind_desc = "Quickly drains power in an area around the invoker, causing burns due to the high amount of energy<br><b>Maximum 20 chants.</b>"
+
+/datum/clockwork_scrupture/channeled/void_volt()
+	var/power_drained = 0
+
+	for(var/t in spiral_range_turfs(drain_range, src))
+		var/turf/T = t
+		for(var/M in T)
+			var/atom/movable/A = M
+			power_drained += A.power_drain(TRUE) //TODO
