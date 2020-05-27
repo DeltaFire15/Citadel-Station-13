@@ -41,8 +41,8 @@
 
 /obj/item/stock_parts/cell/power_drain(clockcult_user, drain_weapons = FALSE)
 	if(charge)
-		. = min(charge, MIN_CLOCKCULT_POWER*3)
-		charge = use(.)
+		. = min(charge, MIN_CLOCKCULT_POWER*4)
+		use(.)
 		update_icon()
 
 /mob/living/silicon/robot/power_drain(clockcult_user, drain_weapons = FALSE)
