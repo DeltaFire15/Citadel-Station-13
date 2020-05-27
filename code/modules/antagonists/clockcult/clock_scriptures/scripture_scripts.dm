@@ -263,16 +263,16 @@
 		duration = max(duration, 100)
 	return slab.procure_gateway(invoker, duration, portal_uses)
 
-/datum/clockwork_scripture/channeled/void_volt()
+/datum/clockwork_scripture/channeled/void_volt
 	descname = "Channeled, Power Drain"
 	name = "Void Volt"
 	desc = "A channled chant that quickly drains any powercells in a large radius, but burns the invoker. \
 	Can be channeled with more cultists to increase range and decrease damage in relation to power absorbed. \
 	Also charges clockwork power by a small percentage of the drained power, which can help offset the scriptures powercost."
 	chant_invocations = list("Make their lights fall dark!", "Their power shall fuel Ratvar!")
-	chant_amount = 20
-	chant_interval = 20
-	channel_time = 40
+	chant_amount = 10
+	chant_interval = 35
+	channel_time = 50
 	power_cost = 300
 	multiple_invokers_used = TRUE
 	multiple_invokers_optional = TRUE
@@ -281,13 +281,27 @@
 	primary_component = GEIS_CAPACITOR
 	sort_priority = 8
 	quickbind = TRUE
-	quickbind_desc = "Quickly drains power in an area around the invoker, causing burns due to the high amount of energy<br><b>Maximum 20 chants.</b>"
+	quickbind_desc = "Quickly drains power in an area around the invoker, causing burns due to the high amount of energy<br><b>Maximum 10 chants.</b>"
 
-/datum/clockwork_scrupture/channeled/void_volt()
+/datum/clockwork_scrupture/channeled/void_volt/chant_effects(chant_number)
 	var/power_drained = 0
-
+	var/drain_range = 8
+	var/additional_chanters = 0
+	for(var/mob/living/L in range(1, invoker))
+		if(!L.stat && is_servant_of_ratvar(L))
+			additional_chanters++
+	drain_range = min(drain_range + 2 * additional_chanters, drain_range * 2) //
 	for(var/t in spiral_range_turfs(drain_range, src))
 		var/turf/T = t
 		for(var/M in T)
 			var/atom/movable/A = M
-			power_drained += A.power_drain(TRUE) //TODO
+			power_drained += A.power_drain(TRUE)
+	new /obj/effect/temp_visual/ratvar/sigil/transmission(loc, 1 + (power_drained * 0.0035))
+	//TODO: Add stuff for damaging the caster + adding a small percentage of stolen power to the clockies reserves
+	invoker.visible_message("<span class='warning'>[invoker] glows a brilliant orange!</span>")
+	if(!(invoker in color_altered_mobs))
+		color_altered_mobs += invoker
+	user.add_atom_colour("#00FF00", ADMIN_COLOUR_PRIORITY)
+
+
+	return TRUE
