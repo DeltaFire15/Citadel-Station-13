@@ -1,0 +1,36 @@
+"a" = (/turf/open/space/basic,/area/space)
+"b" = (/turf/open/floor/mineral/titanium,/area/space)
+"c" = (/obj/machinery/door/airlock/shuttle,/turf/open/floor/mineral/titanium,/area/space)
+"d" = (/obj/structure/table/reinforced,/turf/open/floor/mineral/titanium,/area/space)
+"e" = (/obj/machinery/door/airlock/shuttle/glass,/turf/open/floor/mineral/titanium,/area/space)
+"j" = (/obj/machinery/computer/communications{dir = 1},/turf/open/floor/mineral/titanium,/area/space)
+"p" = (/obj/machinery/door/airlock/titanium/glass,/turf/open/floor/mineral/titanium,/area/space)
+"t" = (/obj/machinery/power/emitter/anchored{dir = 4; projectile_type = /obj/item/projectile/beam/beam_rifle/hitscan},/turf/open/floor/plating,/area/space)
+"x" = (/obj/machinery/power/port_gen/pacman,/turf/open/floor/mineral/titanium,/area/space)
+"F" = (/obj/machinery/computer/sat_control{dir = 1},/turf/open/floor/mineral/titanium,/area/space)
+"G" = (/obj/machinery/computer/crew,/turf/open/floor/mineral/titanium,/area/space)
+"J" = (/obj/structure/shuttle/engine/heater{dir = 8},/obj/structure/window/plasma/reinforced/spawner/east,/turf/open/floor/plating,/area/space)
+"M" = (/obj/effect/spawner/structure/window/shuttle,/turf/open/floor/mineral/titanium,/area/space)
+"P" = (/turf/closed/wall/mineral/titanium,/area/space)
+"R" = (/obj/machinery/sleeper,/turf/open/floor/mineral/titanium,/area/space)
+"T" = (/obj/machinery/door/airlock/titanium,/turf/open/floor/mineral/titanium,/area/space)
+"U" = (/obj/machinery/power/smes,/turf/open/floor/mineral/titanium,/area/space)
+"V" = (/obj/structure/shuttle/engine/propulsion{dir = 8},/turf/open/floor/plating,/area/space)
+"W" = (/obj/machinery/computer/camera_advanced{dir = 1},/turf/open/floor/mineral/titanium,/area/space)
+
+(1,1,1) = {"
+aaPPPPPPaaaaaaaaaaaa
+aaVJbbPPTTPtaaaaaaaa
+aaVJbbbPbbPPPPaaaaaa
+aaPPPPcPTTPRRPtaaaaa
+aaaPPbbbbbPbbPPPaaaa
+aaPPPbUddbPpPPGPPPPP
+aaebebPxbbbbebbbebbM
+aaebebPxbbbbebbbebbM
+aaPPPbUddbPpPPWPPPPP
+aaaPPbbbbbPbbPPPaaaa
+aaPPPPcPTTPFjPtaaaaa
+aaVJbbbPbbPPPPaaaaaa
+aaVJbbPPTTPtaaaaaaaa
+aaPPPPPPaaaaaaaaaaaa
+"}
