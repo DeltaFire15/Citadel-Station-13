@@ -219,7 +219,7 @@
 /turf/open/floor/ratvar_act(force, ignore_mobs)
 	. = ..()
 	if(.)
-		ChangeTurf(/turf/open/floor/clockwork, flags = CHANGETURF_INHERIT_AIR)
+		ChangeTurf(/turf/open/floor/plating/clockwork, flags = CHANGETURF_INHERIT_AIR)
 
 /turf/open/floor/acid_melt()
 	ScrapeAway(flags = CHANGETURF_INHERIT_AIR)

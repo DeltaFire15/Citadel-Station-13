@@ -642,7 +642,7 @@ GLOBAL_LIST_INIT(brass_recipes, list ( \
 	max_amount = 50
 	throw_speed = 1
 	throw_range = 3
-	turf_type = /turf/open/floor/clockwork
+	turf_type = /turf/open/floor/plating/clockwork
 	novariants = FALSE
 	grind_results = list(/datum/reagent/iron = 5, /datum/reagent/teslium = 15, /datum/reagent/fuel/holyoil = 1)
 	merge_type = /obj/item/stack/tile/brass

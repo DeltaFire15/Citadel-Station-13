@@ -135,23 +135,25 @@
 	floor_tile = /obj/item/stack/tile/plasteel
 
 //Clockwork floor: Slowly heals toxin damage on nearby servants.
-/turf/open/floor/clockwork
+/turf/open/floor/plating/clockwork
 	name = "clockwork floor"
 	desc = "Tightly-pressed brass tiles. They emit minute vibration."
 	icon_state = "plating"
-	baseturfs = /turf/open/floor/clockwork
+	baseturfs = /turf/open/floor/plating/clockwork
 	footstep = FOOTSTEP_PLATING
 	barefootstep = FOOTSTEP_HARD_BAREFOOT
 	clawfootstep = FOOTSTEP_HARD_CLAW
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 	var/dropped_brass
 	var/uses_overlay = TRUE
+	attachment_holes = FALSE
+	can_floor = FALSE
 	var/obj/effect/clockwork/overlay/floor/realappearence
 
-/turf/open/floor/clockwork/Bless() //Who needs holy blessings when you have DADDY RATVAR?
+/turf/open/floor/plating/clockwork/plating/Bless() //Who needs holy blessings when you have DADDY RATVAR?
 	return
 
-/turf/open/floor/clockwork/Initialize()
+/turf/open/floor/plating/clockwork/Initialize()
 	. = ..()
 	if(uses_overlay)
 		new /obj/effect/temp_visual/ratvar/floor(src)
@@ -159,26 +161,26 @@
 		realappearence = new /obj/effect/clockwork/overlay/floor(src)
 		realappearence.linked = src
 
-/turf/open/floor/clockwork/Destroy()
+/turf/open/floor/plating/clockwork/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	if(uses_overlay && realappearence)
 		QDEL_NULL(realappearence)
 	return ..()
 
-/turf/open/floor/clockwork/ReplaceWithLattice()
+/turf/open/floor/plating/clockwork/ReplaceWithLattice()
 	. = ..()
 	for(var/obj/structure/lattice/L in src)
 		L.ratvar_act()
 
-/turf/open/floor/clockwork/Entered(atom/movable/AM)
+/turf/open/floor/plating/clockwork/Entered(atom/movable/AM)
 	..()
 	START_PROCESSING(SSobj, src)
 
-/turf/open/floor/clockwork/process()
+/turf/open/floor/plating/clockwork/process()
 	if(!healservants())
 		STOP_PROCESSING(SSobj, src)
 
-/turf/open/floor/clockwork/proc/healservants()
+/turf/open/floor/plating/clockwork/proc/healservants()
 	for(var/mob/living/L in src)
 		if(L.stat == DEAD)
 			continue
@@ -198,10 +200,10 @@
 		flick_overlay(I, viewing, 8)
 		L.adjustToxLoss(-3, TRUE, TRUE)
 
-/turf/open/floor/clockwork/try_replace_tile(obj/item/stack/tile/T, mob/user, params)
+/turf/open/floor/plating/clockwork/try_replace_tile(obj/item/stack/tile/T, mob/user, params)
 	return
 
-/turf/open/floor/clockwork/crowbar_act(mob/living/user, obj/item/I)
+/turf/open/floor/plating/clockwork/crowbar_act(mob/living/user, obj/item/I)
 	if(islist(baseturfs))
 		if(type in baseturfs)
 			return TRUE
@@ -213,7 +215,7 @@
 		make_plating()
 	return TRUE
 
-/turf/open/floor/clockwork/make_plating()
+/turf/open/floor/plating/clockwork/make_plating()
 	if(!dropped_brass)
 		new /obj/item/stack/tile/brass(src)
 		dropped_brass = TRUE
@@ -224,19 +226,19 @@
 		return
 	return ..()
 
-/turf/open/floor/clockwork/narsie_act()
+/turf/open/floor/plating/clockwork/narsie_act()
 	..()
-	if(istype(src, /turf/open/floor/clockwork)) //if we haven't changed type
+	if(istype(src, /turf/open/floor/plating/clockwork)) //if we haven't changed type
 		var/previouscolor = color
 		color = "#960000"
 		animate(src, color = previouscolor, time = 8)
 		addtimer(CALLBACK(src, /atom/proc/update_atom_colour), 8)
 
-/turf/open/floor/clockwork/reebe
+/turf/open/floor/plating/clockwork/reebe
 	name = "cogplate"
 	desc = "Warm brass plating. You can feel it gently vibrating, as if machinery is on the other side."
 	icon_state = "reebe"
-	baseturfs = /turf/open/floor/clockwork/reebe
+	baseturfs = /turf/open/floor/plating/clockwork/reebe
 	uses_overlay = FALSE
 	planetary_atmos = TRUE
 

@@ -5,7 +5,7 @@
 	spawnableTurfs = list(/turf/closed/wall/mineral/cult = 100)
 
 /datum/mapGeneratorModule/bottomLayer/clockFloor
-	spawnableTurfs = list(/turf/open/floor/clockwork = 100)
+	spawnableTurfs = list(/turf/open/floor/plating/clockwork = 100)
 
 /datum/mapGeneratorModule/border/clockWalls
 	spawnableTurfs = list(/turf/closed/wall/clockwork = 100)

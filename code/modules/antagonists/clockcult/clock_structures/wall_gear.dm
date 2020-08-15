@@ -53,13 +53,13 @@
 		to_chat(user, "<span class='notice'>You start adding [W] to [src]...</span>")
 		if(do_after(user, 20, target = src))
 			var/brass_floor = FALSE
-			if(istype(T, /turf/open/floor/clockwork)) //if the floor is already brass, costs less to make(conservation of masssssss)
+			if(istype(T, /turf/open/floor/plating/clockwork)) //if the floor is already brass, costs less to make(conservation of masssssss)
 				brass_floor = TRUE
 			if(W.use(2 - brass_floor))
 				if(anchored)
 					T.PlaceOnTop(/turf/closed/wall/clockwork)
 				else
-					T.PlaceOnTop(/turf/open/floor/clockwork, flags = CHANGETURF_INHERIT_AIR)
+					T.PlaceOnTop(/turf/open/floor/plating/clockwork, flags = CHANGETURF_INHERIT_AIR)
 					new /obj/structure/falsewall/brass(T)
 				qdel(src)
 			else

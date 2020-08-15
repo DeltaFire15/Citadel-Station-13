@@ -18,6 +18,7 @@
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 
 	var/attachment_holes = TRUE
+	var/can_floor = TRUE
 
 /turf/open/floor/plating/examine(mob/user)
 	. = ..()
@@ -66,7 +67,7 @@
 					R.use(2)
 					to_chat(user, "<span class='notice'>You reinforce the floor.</span>")
 				return
-	else if(istype(C, /obj/item/stack/tile))
+	else if(istype(C, /obj/item/stack/tile) && can_floor)
 		if(!broken && !burnt)
 			for(var/obj/O in src)
 				if(O.level == 1) //ex. pipes laid underneath a tile

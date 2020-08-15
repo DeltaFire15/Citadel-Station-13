@@ -31,14 +31,14 @@
 	return FALSE
 
 /turf/closed/wall/clockwork/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
-	return list("operation_time" = 50, "new_obj_type" = /turf/open/floor/clockwork, "power_cost" = -POWER_WALL_MINUS_FLOOR, "spawn_dir" = SOUTH)
+	return list("operation_time" = 50, "new_obj_type" = /turf/open/floor/plating/clockwork, "power_cost" = -POWER_WALL_MINUS_FLOOR, "spawn_dir" = SOUTH)
 
 /turf/open/floor/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
 	if(floor_tile == /obj/item/stack/tile/plasteel)
 		new floor_tile(src)
 		make_plating()
 		playsound(src, 'sound/items/crowbar.ogg', 10, 1) //clink
-	return list("operation_time" = 30, "new_obj_type" = /turf/open/floor/clockwork, "power_cost" = POWER_FLOOR, "spawn_dir" = SOUTH)
+	return list("operation_time" = 30, "new_obj_type" = /turf/open/floor/plating/clockwork, "power_cost" = POWER_FLOOR, "spawn_dir" = SOUTH)
 
 /turf/open/floor/plating/asteroid/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
 	return FALSE
@@ -49,7 +49,7 @@
 /turf/open/lava/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
 	return FALSE
 
-/turf/open/floor/clockwork/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
+/turf/open/floor/plating/clockwork/fabrication_vals(mob/living/user, obj/item/clockwork/replica_fabricator/fabricator, silent)
 	if(locate(/obj/structure/table) in src)
 		return FALSE
 	if(locate(/obj/structure/falsewall) in contents)
