@@ -85,6 +85,8 @@
 	GLOB.neovgre_exists ++
 	var/obj/item/mecha_parts/mecha_equipment/weapon/energy/laser/heavy/neovgre/N = new
 	N.attach(src)
+	var/obj/item/mecha_parts/mecha_equipment/weapon/energy/boltdriver/B = new
+	B.attach(src)
 
 /obj/structure/mecha_wreckage/durand/neovgre
 	name = "\improper Neovgre wreckage?"
@@ -101,3 +103,131 @@
 	if(istype(M))
 		return 1
 	return 0
+
+//Boltdriver. Heavy weapon firing brass bolts at extreme velocities after a short chargeup telegraphing its shot. If you see its targetting beam indicating a chargeup, move out of it immediately
+//Overrides the normal weapon action due to its special telegraphed chargeup.
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/boltdriver
+	name = "\improper Boltdriver"
+	desc = "An abomination of a weapon firing a high-velocity bolt piercing through targets. Requires a moment of chargeup for the rail supercapacitors before firing."
+	harmful = TRUE //Yeah you bet this is harmful
+	equip_cooldown = 50 //Supercapacitors need quite a while to recharge
+	energy_drain = 300
+	projectile = /obj/item/projectile/bullet/brass_bolt
+	var/chargeup_time = 10
+	var/list/obj/effect/projectile/tracer/current_tracers
+
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/boltdriver/can_attach(obj/mecha/combat/neovgre/M)
+	if(istype(M))
+		return 1
+	return 0
+
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/boltdriver/action(atom/target, params)
+	if(!action_checks(target))
+		return 0
+
+	var/turf/curloc = get_turf(chassis)
+	var/turf/targloc = get_turf(target)
+	if (!targloc || !istype(targloc) || !curloc)
+		return 0
+	if (targloc == curloc)
+		return 0
+
+	set_ready_state(0)
+	var/obj/item/projectile/beam/beam_rifle/hitscan/aiming_beam/boltdriver_chargeup_beam/BC = new
+	BC.gun = src
+	BC.wall_pierce_amount = 2
+	BC.structure_pierce_amount = 8
+	BC.do_pierce = TRUE
+	BC.color = rgb(255, 163, 26)
+	BC.preparePixelProjectile(targloc, chassis.occupant)
+	BC.fire()
+	if(!do_after_mecha(targloc, chargeup_time))
+		set_ready_state(1)
+		QDEL_LIST(current_tracers)
+		return
+	STOP_PROCESSING(SSfastprocess, src)
+	QDEL_LIST(current_tracers)
+	target = targloc
+	for(var/mob/M in targloc)
+		target = M
+		break
+	set_ready_state(1)
+	return ..()
+
+/obj/item/projectile/bullet/brass_bolt
+	icon_state = "magjectile" //TODO
+	pass_flags = PASSTABLE | PASSGLASS | PASSGRILLE
+	embedding = list(embed_chance=0, fall_chance=2, jostle_chance=0, ignore_throwspeed_threshold=TRUE, pain_stam_pct=0.5, pain_mult=3, rip_time=10) //Yeah no these can't embed. They just tear through people instead.
+	damage_type = BRUTE
+	flag = "energy"
+	damage = 65
+	armour_penetration = 25
+	light_range = 3
+	pixels_per_second = TILES_TO_PIXELS(16.667*3) //Written this way to make clear it is thrice as fast as a normal bullet
+	range = 60
+	light_color = LIGHT_COLOR_ORANGE
+	var/mob_obj_penetration = 8
+	var/wallpenetration = 2
+	var/turf/cached
+	var/list/pierced = list()
+
+/obj/item/projectile/bullet/brass_bolt/proc/check_pierce(atom/target)
+	if(pierced[target])		//we already pierced them go away
+		return TRUE
+	if(isclosedturf(target))
+		if(wallpenetration > 0)
+			wallpenetration--
+			return TRUE
+	if(ismovable(target))
+		var/atom/movable/AM = target
+		if(AM.density && !AM.CanPass(src, get_turf(target)) && !ismob(AM))
+			if(mob_obj_penetration > 0)
+				if(isobj(AM))
+					var/obj/O = AM
+					O.take_damage(damage, BRUTE, "energy", FALSE) //Fast enough to be considered an energy projectile when overpenetrating, though it still causes brute damage
+				pierced[AM] = TRUE
+				mob_obj_penetration--
+				return TRUE
+	return FALSE
+
+/*
+/obj/item/projectile/bullet/brass_bolt/proc/handle_impact(atom/target)
+	if(isobj(target))
+		var/obj/O = target
+		O.take_damage(damage, BRUTE, "energy", FALSE)
+	if(isliving(target))
+		var/mob/living/L = target
+		L.adjustBruteLoss(damage)
+		L.emote("scream")
+
+/obj/item/projectile/bullet/brass_bolt/proc/handle_hit(atom/target)
+	set waitfor = FALSE
+	if(!cached && !QDELETED(target))
+		cached = get_turf(target)
+	if(!QDELETED(target))
+		handle_impact(target)
+*/
+
+/obj/item/projectile/bullet/brass_bolt/Bump(atom/target)
+	if(check_pierce(target))
+		permutated += target
+		trajectory_ignore_forcemove = TRUE
+		forceMove(target.loc)
+		trajectory_ignore_forcemove = FALSE
+		return FALSE
+	if(!QDELETED(target))
+		cached = get_turf(target)
+	. = ..()
+
+/obj/item/projectile/bullet/brass_bolt/on_hit(atom/target, blocked = FALSE)
+	if(!QDELETED(target))
+		cached = get_turf(target)
+	//handle_hit(target)
+	if(mob_obj_penetration > 0 && !isturf(target))
+		. = BULLET_ACT_FORCE_PIERCE
+		mob_obj_penetration--
+	return ..()
+
+/obj/item/projectile/beam/beam_rifle/hitscan/aiming_beam/boltdriver_chargeup_beam
+	name = "targetting beam"
+	hitscan_light_color_override = "#ffa31a"
