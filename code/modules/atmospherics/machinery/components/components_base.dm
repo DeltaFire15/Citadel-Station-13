@@ -144,6 +144,7 @@
 		if(!parent)
 			stack_trace("Component is missing a pipenet! Rebuilding...")
 			SSair.add_to_rebuild_queue(src)
+			continue	//Lets not edit the vars of something that doesn't exist.
 		parent.update = 1
 
 /obj/machinery/atmospherics/components/returnPipenets()
