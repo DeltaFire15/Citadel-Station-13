@@ -768,3 +768,23 @@
 		M.dna.species.punchdamagelow -= damageboost
 		M.dna.species.punchwoundbonus -= woundboost
 		to_chat(M, "<span class='notice'>You calm yourself, and your unnatural strength dissipates.</span>")
+
+/*
+Aftersurge, a status effect applied by EMPs that will severely hamper followup EMPs. Only gets applied to humanoids, robot-monkeys get out.
+EMP defense depends on strength of the EMP, which affects how many stacks get added. Slightly exponential in nature, reaching close to 100% at 100 stacks.
+*/
+/datum/status_effect/stacking/aftersurge
+	id = "Aftersurge"
+	delay_before_decay = 4	//0.4 seconds before decay sets in.
+	tick_interval = 1		//Lose four stacks every  2 ticks. 20 stacks / second. For now.
+	stack_decay = 4
+	max_stacks = 200		//Whom did you anger to effectively get EMPd 4 times with a max strength EMP? Either way, you only get 10 seconds of defense max, starting to go below 100% after half that time.
+
+/datum/status_effect/stacking/aftersurge/can_have_status()
+	return TRUE	//You can always have this status
+
+/datum/status_effect/stacking/aftersurge/can_gain_stacks()
+	return TRUE
+
+/datum/status_effect/stacking/aftersurge/proc/calc_emp_defense()
+	return round(clamp((stacks ** 1.3) / 4, 0, 100), 0.1)	//Subject to balance. Currently 16% at 25, 40% at 50, 99.5% at 100.

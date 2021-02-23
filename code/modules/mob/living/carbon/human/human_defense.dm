@@ -404,6 +404,15 @@
 	electrocution_animation(40)
 
 /mob/living/carbon/human/emp_act(severity)
+	var/datum/status_effect/stacking/aftersurge/AS = has_status_effect(STATUS_EFFECT_AFTERSURGE)
+	if(AS)
+		var/cached_severity = severity
+		severity = round(severity * (100 - AS.calc_emp_defense()) * 0.01)
+		AS.add_stacks(round(cached_severity * 0.5))
+	else
+		apply_status_effect(STATUS_EFFECT_AFTERSURGE, round(severity * 0.5))
+	if(!severity)
+		return
 	. = ..()
 	if(. & EMP_PROTECT_CONTENTS)
 		return

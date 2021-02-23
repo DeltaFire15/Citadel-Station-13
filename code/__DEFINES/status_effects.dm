@@ -43,6 +43,8 @@
 #define STATUS_EFFECT_MANTRA /datum/status_effect/mantra // a toggled self buff that makes you stronger and more resilient, but drains stamina over time
 #define STATUS_EFFECT_ASURA /datum/status_effect/asura // like a weaker version of mantra, drains HP instead of stamina and has no armor
 
+#define STATUS_EFFECT_AFTERSURGE /datum/status_effect/stacking/aftersurge	//A stacking EMP defense buff applied by EMPs, to prevent stacking EMPs to instakill someone.
+
 /////////////
 // DEBUFFS //
 /////////////
