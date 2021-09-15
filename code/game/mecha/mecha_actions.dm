@@ -139,9 +139,12 @@
 
 /obj/mecha/AltClick(mob/living/user)
 	. = ..()
-	if((user == occupant) && user.canUseTopic(src))
-		toggle_strafe()
-		return TRUE
+	if(!(user == occupant) || !user.canUseTopic(src))	//!!WIP!!
+	if(!(user in return_controllers_with_flag(VEHICLE_CONTROL_DRIVE)))
+		to_chat(user, "<span class='warning'>You're in the wrong seat to control movement.</span>")
+		return
+	toggle_strafe()
+	return TRUE
 
 /obj/mecha/proc/toggle_strafe()
 	strafe = !strafe
@@ -279,7 +282,37 @@
 /datum/action/innate/mecha/mech_toggle_phasing/Activate()
 	if(!owner || !chassis || chassis.occupant != owner)
 		return
-	chassis.phasing = !chassis.phasing
+	chassis.phasing = chassis.phasing ? "" : "phasing"
 	button_icon_state = "mech_phasing_[chassis.phasing ? "on" : "off"]"
 	chassis.occupant_message("<font color=\"[chassis.phasing?"#00f\">En":"#f00\">Dis"]abled phasing.</font>")
 	UpdateButtonIcon()
+
+///swap seats, for two person mecha
+/datum/action/innate/mecha/swap_seat
+	name = "Switch Seats"
+	button_icon_state = "mech_seat_swap"
+
+/datum/action/innate/mecha/swap_seat/Trigger()
+	if(!owner || !chassis || !(owner in chassis.occupants))
+		return
+
+	if(chassis.occupants.len == chassis.max_occupants)
+		chassis.balloon_alert(owner, "other seat occupied!")
+		return
+	var/list/drivers = chassis.return_drivers()
+	chassis.balloon_alert(owner, "moving to other seat...")
+	chassis.is_currently_ejecting = TRUE
+	if(!do_after(owner, chassis.has_gravity() ? chassis.exit_delay : 0 , target = chassis))
+		chassis.balloon_alert(owner, "interrupted!")
+		chassis.is_currently_ejecting = FALSE
+		return
+	chassis.is_currently_ejecting = FALSE
+	if(owner in drivers)
+		chassis.balloon_alert(owner, "controlling gunner seat")
+		chassis.remove_control_flags(owner, VEHICLE_CONTROL_DRIVE|VEHICLE_CONTROL_SETTINGS)
+		chassis.add_control_flags(owner, VEHICLE_CONTROL_MELEE|VEHICLE_CONTROL_EQUIPMENT)
+	else
+		chassis.balloon_alert(owner, "controlling pilot seat")
+		chassis.remove_control_flags(owner, VEHICLE_CONTROL_MELEE|VEHICLE_CONTROL_EQUIPMENT)
+		chassis.add_control_flags(owner, VEHICLE_CONTROL_DRIVE|VEHICLE_CONTROL_SETTINGS)
+	chassis.update_icon_state()

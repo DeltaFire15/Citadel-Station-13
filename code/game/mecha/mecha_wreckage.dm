@@ -269,3 +269,24 @@
 			var/part = pick(parts)
 			welder_salvage += part
 			parts -= part
+
+/obj/structure/mecha_wreckage/savannah_ivanov
+	name = "\improper Savannah-Ivanov wreckage"
+	icon = 'icons/mecha/coop_mech.dmi'
+	icon_state = "savannah_ivanov-broken"
+
+
+/obj/structure/mecha_wreckage/savannah_ivanov/Initialize()
+	. = ..()
+	var/list/parts = list(
+		/obj/item/mecha_parts/part/savannah_ivanov_torso,
+		/obj/item/mecha_parts/part/savannah_ivanov_head,
+		/obj/item/mecha_parts/part/savannah_ivanov_left_arm,
+		/obj/item/mecha_parts/part/savannah_ivanov_right_arm,
+		/obj/item/mecha_parts/part/savannah_ivanov_left_leg,
+		/obj/item/mecha_parts/part/savannah_ivanov_right_leg)
+	for(var/i = 0; i < 2; i++)
+		if(parts.len && prob(40))
+			var/part = pick(parts)
+			welder_salvage += part
+			parts -= part

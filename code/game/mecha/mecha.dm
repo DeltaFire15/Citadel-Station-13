@@ -4,6 +4,18 @@
 #define MECHA_INT_TANK_BREACH	(1<<3)
 #define MECHA_INT_CONTROL_LOST	(1<<4)
 
+#define ADDING_ACCESS_POSSIBLE (1<<0)
+#define ADDING_MAINT_ACCESS_POSSIBLE (1<<1)
+#define CANSTRAFE (1<<2)
+#define LIGHTS_ON (1<<3)
+#define SILICON_PILOT (1<<4)
+#define IS_ENCLOSED (1<<5)
+#define HAS_LIGHTS (1<<6)
+#define QUIET_STEPS (1<<7)
+#define QUIET_TURNS (1<<8)
+///blocks using equipment and melee attacking.
+#define CANNOT_INTERACT (1<<9)
+
 #define MELEE 1
 #define RANGED 2
 
@@ -11,6 +23,18 @@
 #define SIDE_ARMOUR 2
 #define BACK_ARMOUR 3
 
+//Control flags
+///controls the mechs movement
+#define MECHA_CONTROL_DRIVE (1<<0)
+///melee attacks/shoves a mech may have
+#define MECHA_CONTROL_MELEE (1<<1)
+///using equipment/weapons on the mech
+#define MECHA_CONTROL_EQUIPMENT (1<<2)
+///changing around settings and the like.
+#define MECHA_CONTROL_SETTINGS (1<<3)
+
+///ez define for giving a single pilot mech all the flags it needs.
+#define FULL_MECHA_CONTROL ALL
 
 /obj/mecha
 	name = "mecha"
@@ -27,7 +51,8 @@
 	attack_hand_speed = CLICK_CD_MELEE
 	attack_hand_is_action = TRUE
 	var/can_move = 0 //time of next allowed movement
-	var/mob/living/occupant = null
+	var/list/mob/living/occupants = list()	//!!WIP!!
+	var/max_occupants = 1	//How many people fit into this mech? Usually 1.
 	var/step_in = 10 //make a step in step_in/10 sec.
 	var/dir_in = SOUTH //What direction will the mech face when entered/powered on? Defaults to South.
 	var/normal_step_energy_drain = 10 //How much energy the mech will consume each time it moves. This variable is a backup for when leg actuators affect the energy drain.
@@ -69,6 +94,9 @@
 	var/max_temperature = 25000
 	var/internal_damage_threshold = 50 //health percentage below which internal damage is possible
 	var/internal_damage = 0 //contains bitflags
+
+	///Contains flags for the mecha - somewhat
+	var/mecha_flags = ADDING_ACCESS_POSSIBLE | CANSTRAFE | IS_ENCLOSED | HAS_LIGHTS
 
 	var/list/operation_req_access = list()//required access level for mecha operation
 	var/list/internals_req_access = list(ACCESS_ROBOTICS)//REQUIRED ACCESS LEVEL TO OPEN CELL COMPARTMENT
@@ -112,7 +140,8 @@
 	var/smoke = 5
 	var/smoke_ready = 1
 	var/smoke_cooldown = 100
-	var/phasing = FALSE
+	///check for phasing, if it is set to text (to describe how it is phasing: "flying", "phasing") it will let the mech walk through walls.
+	var/phasing = ""	
 	var/phasing_energy_drain = 200
 	var/phase_state = "" //icon_state when phasing
 	var/strafe = FALSE //If we are strafing
@@ -425,10 +454,10 @@
 		return
 	if(!locate(/turf) in list(target,target.loc)) // Prevents inventory from being drilled
 		return
-	if(completely_disabled)
+	if(completely_disabled || (mecha_flags & CANNOT_INTERACT))
 		return
 	if(phasing)
-		occupant_message("Unable to interact with objects while phasing")
+		occupant_message("Unable to interact with objects while [phasing]")
 		return
 	if(user.incapacitated())
 		return
@@ -453,18 +482,28 @@
 			if(HAS_TRAIT(L, TRAIT_PACIFISM) && selected.harmful)
 				to_chat(user, "<span class='warning'>You don't want to harm other living beings!</span>")
 				return
+			if(SEND_SIGNAL(src, COMSIG_MECHA_EQUIPMENT_CLICK, L, target) & COMPONENT_CANCEL_EQUIPMENT_CLICK)
+				return
 			if(selected.action(target,params))
 				selected.start_cooldown()
 	else if(selected && selected.is_melee())
 		if(isliving(target) && selected.harmful && HAS_TRAIT(L, TRAIT_PACIFISM))
 			to_chat(user, "<span class='warning'>You don't want to harm other living beings!</span>")
 			return
+		if(SEND_SIGNAL(src, COMSIG_MECHA_EQUIPMENT_CLICK, L, target) & COMPONENT_CANCEL_EQUIPMENT_CLICK)
+			return
 		if(selected.action(target,params))
 			selected.start_cooldown()
 	else
+		if(!(L in return_controllers_with_flag(VEHICLE_CONTROL_MELEE)))
+			to_chat(L, "<span class='warning'>You're in the wrong seat to interact with your hands.</span>")
+			return
+		var/adjacent = Adjacent(target)
+		if(SEND_SIGNAL(src, COMSIG_MECHA_MELEE_CLICK, L, target, melee_can_hit, adjacent) & COMPONENT_CANCEL_MELEE_CLICK)
+			return
 		if(internal_damage & MECHA_INT_CONTROL_LOST)
 			target = safepick(oview(1,src))
-		if(!melee_can_hit || !istype(target, /atom))
+		if(!melee_can_hit || !adjacent || !istype(target, /atom))
 			return
 		target.mech_melee_attack(src)
 		melee_can_hit = 0
