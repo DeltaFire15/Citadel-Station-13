@@ -98,3 +98,32 @@ GLOBAL_LIST_EMPTY(all_clockwork_rites) //a list containing all clockwork rites. 
 #define ARK_SCREAM_COOLDOWN 300 //This much time has to pass between instances of the Ark taking damage before it will "scream" again
 
 #define PRISM_DELAY_DURATION 1200 //how long prolonging prisms delay the shuttle for; defaults to 2 minutes
+
+//Bitflags for custom sigil stuff.
+#define SIGIL_NEEDS_POWER     (1<<0)      //Does this component need power provided by others to do anything?
+#define SIGIL_POWERING        (1<<1)      //Does this component provide power?
+#define SIGIL_DRAINING        (1<<2)      //Does this component drain power?
+#define SIGIL_GROUNDING       (1<<3)      //Does this component null power for this point, resulting any followup components ignoring any powering / draining component before this one.
+#define SIGIL_STRENGTHENING   (1<<4)      //Does this component increase spell effects?
+#define SIGIL_WEAKENING       (1<<5)      //Does this component decrease spell effects?
+#define SIGIL_DISCOUNTING     (1<<6)      //Does this component make spells cheaper?
+#define SIGIL_COSTLY          (1<<7)      //Does this component make spells stronger?
+#define SIGIL_STABLE          (1<<8)      //Does this component make spells have less backfire consequences?
+#define SIGIL_UNSTABLE        (1<<9)      //Does this component make spells have more backfire consequences?
+
+//Custom sigil name keys for spells to compare to its list.
+#define CS_VOID_VOLT "custom_sigil_void_volt"
+
+///List for sigil spell types, divided into their area size. Key for area size is xsize-ysize. 1s for a sigil-spell mark where a sigil is needed, 0s mark where no sigil is. Passed from x low-high repeatedly via y low-high.
+GLOBAL_LIST_INIT(sigil_spell_areas, list(
+        "3-3" = list("101111101" = CS_VOID_VOLT,        
+                ),
+        ))
+
+/*
+3-3 101111101
+->
+101
+111
+101
+*/
